@@ -15,6 +15,7 @@ class TestGymTracker:
         gym_tracker.exercises.append(exercise)
 
         assert gym_tracker.read_exercise(exercise_name).name == "Backsquat"
+        #TODO: add check on record
 
     def test_gym_tracker_add_exercise(self):
         exercise = Exercise("Backsquat", 78)
