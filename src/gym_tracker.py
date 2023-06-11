@@ -1,5 +1,12 @@
+import os
+import sys
 from typing import List
 import pandas as pd
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from CONSTANTS import FILE_PATH
+from src.command_texts import COMMAND_TEXTS
 
 class Exercise:
     
@@ -11,35 +18,42 @@ class Exercise:
 class GymTracker:
 
     def __init__(self) -> None:
-        # TODO: BLEAH! Use constants and relative paths! Also, you should probably write in the project and not outside
-        self.file_path = "/home/cristian/Desktop/gym_telegram_bot.csv"
-
-        # TODO: READ CSV HERE AND STORE THE DATAFRAME IN THE CLASS
-        # WHEN YOU UPDATE IT,
-        # 1) UPDATE THE DATAFRAME
-        # 2) EXPORT THE DATAFRAME ON THE FILE
-
-    def add_exercise(self, exercise: Exercise) -> None:
-        self.write_exercise(exercise)
-
-    def read_all_exercises(self, user_id: int) -> str:
-        # TODO: READ CSV ONLY ONE TIME
-        data = pd.read_csv(self.file_path)
-        filtered_data = data.loc[data["USER_ID"] == user_id]
-        # TODO: USE PANDAS TO REMOVE THE COLUMN
-        del filtered_data[filtered_data.columns[-1]]
-        text = filtered_data.to_string(index = False)
-
-        return text
+        self.file_path = FILE_PATH
+        self.dataframe = pd.read_csv(self.file_path)
 
     def write_exercise(self, exercise: Exercise) -> None:
-        #TODO: USE PANDAS TO_CSV
-        with open(self.file_path, 'a') as file:
-            print(exercise.user_id)
-            file.write(f"{exercise.name}, {exercise.record}, {exercise.user_id}\n")
+        exercise = [{"ESERCIZIO": exercise.name, "PESO": exercise.record, "USER_ID": exercise.user_id}]
+        df = pd.DataFrame(exercise)
+        self.dataframe = pd.concat([self.dataframe, df])
+        self.update_csv_file()
 
-    #TODO: USE PANDAS
-    def reset_all(self) -> None:
-        with open(self.file_path, 'w') as file:
-            file.write("ESERCIZIO,PESO,USER_ID\n")
+    def read_all_exercises(self, user_id: int) -> str:
+        filtered_data = self.dataframe.loc[self.dataframe["USER_ID"] == user_id]
+        filtered_data = filtered_data.loc[:, filtered_data.columns != "USER_ID"]
+
+        if not filtered_data.empty:
+            text = filtered_data.to_string(index = False)
+        else:
+            text = COMMAND_TEXTS["IT"]["registerIsEmpty"]
+
+        return text
+    
+    def delete_exercise(self, exercise_name, user_id):
+        filtered_data = self.dataframe.loc[(self.dataframe["ESERCIZIO"] == exercise_name) & (self.dataframe["USER_ID"] == user_id)]
+
+        if filtered_data.empty:
+            raise Exception("No exercise specified")
+        
+        self.dataframe = pd.concat([self.dataframe, filtered_data]).drop_duplicates(keep=False)
+
+        self.update_csv_file()
+
+    def reset_all(self, user_id: int) -> None:
+        filtered_data = self.dataframe.loc[self.dataframe["USER_ID"] == user_id]
+        self.dataframe = pd.concat([self.dataframe, filtered_data]).drop_duplicates(keep=False)
+
+        self.update_csv_file()
+    
+    def update_csv_file(self) -> None:
+        self.dataframe.to_csv(self.file_path, index = False)
 

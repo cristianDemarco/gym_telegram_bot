@@ -40,7 +40,7 @@ async def new_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         name, record = text[0], text[1]
         exercise = Exercise(name, record, update.effective_user.id)
-        gym_tracker.add_exercise(exercise)
+        gym_tracker.write_exercise(exercise)
     except Exception as e:
         print(e)
         text_to_send = COMMAND_TEXTS["IT"]["ERROR"]["EXERCISE_REGISTER_ERROR"]
@@ -56,23 +56,34 @@ async def read_all_exercises(update: Update, context: ContextTypes.DEFAULT_TYPE)
         text=gym_tracker.read_all_exercises(update.effective_user.id)
     )
 
+async def delete_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    exercise_name = update.message.text.replace("/cancella ", "").strip()
+    text_to_send = COMMAND_TEXTS["IT"]["exerciseDeleted"]
+
+    try:
+        gym_tracker.delete_exercise(exercise_name, update.effective_user.id)
+    except:
+        text_to_send = COMMAND_TEXTS["IT"]["ERROR"]["EXERCISE_DELETION_ERROR"]
+
+    await context.bot.send_message(
+        chat_id = update.effective_chat.id,
+        text = text_to_send
+    )
+
 async def reset_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    gym_tracker.reset_all()
+    gym_tracker.reset_all(update.effective_user.id)
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=COMMAND_TEXTS["IT"]["reset"]
     )
-
-    #THE LAST THING YOU SHOULD DO IS SEND THE MESSAGE TO THE USER
-    #IF SOMETHING BREAKS IN RESET_ALL(), YOU TELL TO THE USER THAT YOU HAVE EXECUTED THE COMMAND BUT YOU DIDN'T!
-
+    
 
 if __name__ == '__main__':
 
     handlers = [CommandHandler('start', start), CommandHandler('help', help), 
                 CommandHandler('esercizio', new_exercise), CommandHandler('registro', read_all_exercises),
-                CommandHandler('reset', reset_all)]
+                CommandHandler('reset', reset_all), CommandHandler('cancella', delete_exercise)]
     
     for handler in handlers:
         application.add_handler(handler)

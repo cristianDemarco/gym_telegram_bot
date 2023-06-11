@@ -1,0 +1,1 @@
+FILE_PATH = "gym_telegram_bot.csv"
