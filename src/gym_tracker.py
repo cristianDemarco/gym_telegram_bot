@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import List
+from tabulate import tabulate
 import pandas as pd
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -43,7 +43,7 @@ class GymTracker:
         filtered_data = filtered_data.loc[:, filtered_data.columns != "USER_ID"]
 
         if not filtered_data.empty:
-            text = filtered_data.to_string(index = False)
+            text = tabulate(filtered_data, headers="keys", tablefmt = "plain", showindex=False, colalign = ("center", "center", "center"))
         else:
             text = COMMAND_TEXTS["IT"]["registerIsEmpty"]
 

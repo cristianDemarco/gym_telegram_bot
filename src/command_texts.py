@@ -1,5 +1,3 @@
-# TODO: ADD MULTILANGUAGE STRUCTURE
-
 COMMAND_TEXTS = {
     "IT" : {
         "start" : "Benvenuto, per iniziare esegui /help",

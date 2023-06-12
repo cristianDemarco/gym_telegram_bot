@@ -42,7 +42,7 @@ async def new_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text_to_send = COMMAND_TEXTS["IT"]["exerciseRegisteredSuccessfully"]
 
     try:
-        name, record = text[0], text[1]
+        name, record = text[0].strip(), text[1].strip()
         exercise = Exercise(name, record, date, update.effective_user.id)
         exercise_already_registered = gym_tracker.write_exercise(exercise)
 
@@ -83,7 +83,6 @@ async def reset_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat_id=update.effective_chat.id,
         text=COMMAND_TEXTS["IT"]["reset"]
     )
-
 
 if __name__ == '__main__':
     handlers = [CommandHandler('start', start), CommandHandler('help', help), 
