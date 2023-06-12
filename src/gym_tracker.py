@@ -10,9 +10,10 @@ from src.command_texts import COMMAND_TEXTS
 
 class Exercise:
     
-    def __init__(self, name: str = "Undefined", record: int = 0, user_id: int = 0) -> None:
+    def __init__(self, name: str = "Undefined", record: int = 0, date: str = "Undefined", user_id: int = 0) -> None:
         self.name = name
-        self.record = record 
+        self.record = record
+        self.date = date
         self.user_id = user_id
 
 class GymTracker:
@@ -23,14 +24,13 @@ class GymTracker:
 
     def write_exercise(self, exercise: Exercise) -> bool:
         exercise_already_registered = False
-
         try:
-            index = self.dataframe.index[(self.dataframe['ESERCIZIO'] == exercise.name) & (self.dataframe['USER_ID'] == exercise.user_id)]
-            self.dataframe.loc[index, "PESO"] = exercise.record
+            index = self.dataframe.index[(self.dataframe['ESERCIZIO'] == exercise.name) & (self.dataframe['USER_ID'] == exercise.user_id)].tolist()
+            self.dataframe.loc[index[0], "PESO"] = exercise.record
 
             exercise_already_registered = True
         except:
-            exercise = [{"ESERCIZIO": exercise.name, "PESO": exercise.record, "USER_ID": exercise.user_id}]
+            exercise = [{"ESERCIZIO": exercise.name, "PESO": exercise.record, "DATA": exercise.date, "USER_ID": exercise.user_id}]
             df = pd.DataFrame(exercise)
             self.dataframe = pd.concat([self.dataframe, df])
         finally:

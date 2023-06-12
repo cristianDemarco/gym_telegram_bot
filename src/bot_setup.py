@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+from datetime import datetime
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
@@ -35,11 +36,14 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def new_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.replace("/esercizio ", "").split(",")
+    date = update.effective_message.date.date()
+    date = datetime.strptime(str(date),"%Y-%m-%d").strftime("%d/%m/%Y")
+
     text_to_send = COMMAND_TEXTS["IT"]["exerciseRegisteredSuccessfully"]
 
     try:
         name, record = text[0], text[1]
-        exercise = Exercise(name, record, update.effective_user.id)
+        exercise = Exercise(name, record, date, update.effective_user.id)
         exercise_already_registered = gym_tracker.write_exercise(exercise)
 
         if exercise_already_registered == True:
