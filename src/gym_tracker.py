@@ -21,11 +21,22 @@ class GymTracker:
         self.file_path = FILE_PATH
         self.dataframe = pd.read_csv(self.file_path)
 
-    def write_exercise(self, exercise: Exercise) -> None:
-        exercise = [{"ESERCIZIO": exercise.name, "PESO": exercise.record, "USER_ID": exercise.user_id}]
-        df = pd.DataFrame(exercise)
-        self.dataframe = pd.concat([self.dataframe, df])
-        self.update_csv_file()
+    def write_exercise(self, exercise: Exercise) -> bool:
+        exercise_already_registered = False
+
+        try:
+            index = self.dataframe.index[(self.dataframe['ESERCIZIO'] == exercise.name) & (self.dataframe['USER_ID'] == exercise.user_id)]
+            self.dataframe.loc[index, "PESO"] = exercise.record
+
+            exercise_already_registered = True
+        except:
+            exercise = [{"ESERCIZIO": exercise.name, "PESO": exercise.record, "USER_ID": exercise.user_id}]
+            df = pd.DataFrame(exercise)
+            self.dataframe = pd.concat([self.dataframe, df])
+        finally:
+            self.update_csv_file()
+
+        return exercise_already_registered
 
     def read_all_exercises(self, user_id: int) -> str:
         filtered_data = self.dataframe.loc[self.dataframe["USER_ID"] == user_id]
@@ -38,7 +49,7 @@ class GymTracker:
 
         return text
     
-    def delete_exercise(self, exercise_name, user_id):
+    def delete_exercise(self, exercise_name: str, user_id: int):
         filtered_data = self.dataframe.loc[(self.dataframe["ESERCIZIO"] == exercise_name) & (self.dataframe["USER_ID"] == user_id)]
 
         if filtered_data.empty:

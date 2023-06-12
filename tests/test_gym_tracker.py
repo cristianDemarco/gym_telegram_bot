@@ -1,73 +1,43 @@
 import os
 import sys
+import pandas as pd
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.gym_tracker import Exercise, GymTracker
+from src.CONSTANTS import FILE_PATH
 
 class TestGymTracker:
 
-    def test_gym_tracker_read_exercise(self):
-        exercise_name = "Backsquat"
-        exercise = Exercise("Backsquat", 78)
-
+    def test_gym_tracker_write_exercise(self):
+        exercise = Exercise("Backsquat", 78, 1234567890)
         gym_tracker = GymTracker()
-        gym_tracker.exercises.append(exercise)
+        gym_tracker.write_exercise(exercise)
+        df = pd.read_csv(gym_tracker.file_path)
 
-        assert gym_tracker.read_exercise(exercise_name).name == "Backsquat"
-        #TODO: add check on record
+        assert df[(df["ESERCIZIO"] == "Backsquat") & (df["PESO"] == 78) & (df["USER_ID"] == 1234567890)] in df
 
-    def test_gym_tracker_add_exercise(self):
-        exercise = Exercise("Backsquat", 78)
+    def test_gym_tracker_delete_exercise(self):
+        exercise = Exercise("Backsquat", 78, 1234567890)
         gym_tracker = GymTracker()
-        gym_tracker.add_exercise(exercise)
+        gym_tracker.write_exercise(exercise)
+        gym_tracker.delete_exercise(exercise)
+        df = pd.read_csv(gym_tracker.file_path)
 
-        assert exercise in gym_tracker.exercises
-
-    def test_gym_tracker_remove_exercise(self):
-        exercise1 = Exercise("Backsquat", 78)
-        exercise2 = Exercise("Frontsquat", 75)
-
-        gym_tracker = GymTracker()
-        gym_tracker.exercises.append(exercise1)
-        gym_tracker.exercises.append(exercise2)
-
-        gym_tracker.remove_exercise(exercise2.name)
-
-        assert exercise2 not in gym_tracker.exercises
+        assert df[(df["ESERCIZIO"] == "Backsquat") & (df["PESO"] == 78) & (df["USER_ID"] == 1234567890)] not in df
 
     def test_gym_tracker_read_all_exercises(self):
         exercise1 = Exercise("Backsquat", 78)
         exercise2 = Exercise("Frontsquat", 75)
 
         gym_tracker = GymTracker()
-        gym_tracker.exercises.append(exercise1)
-        gym_tracker.exercises.append(exercise2)
+        gym_tracker.write_exercise(exercise1)
+        gym_tracker.write_exercise(exercise2)
 
         assert exercise1 in gym_tracker.read_all_exercises()
         assert exercise2 in gym_tracker.read_all_exercises()
 
-    def test_gym_set_exercise_value(self):
-        exercise = Exercise("Backsquat", 78)
-        gym_tracker = GymTracker()
-        gym_tracker.exercises.append(exercise)
-
-        new_record = 80
-        
-        gym_tracker.set_exercise_value(exercise.name, new_record)
-
-        assert gym_tracker.read_exercise(exercise.name).record == new_record
-
-    def test_gym_set_exercise_name(self):
-        exercise = Exercise("Frontsquat", 78)
-        gym_tracker = GymTracker()
-        gym_tracker.exercises.append(exercise)
-
-        new_name = "Backsquat"
-        
-        gym_tracker.set_exercise_name(exercise.name, new_name)
-
-        assert gym_tracker.read_exercise(new_name).name == new_name
+#TODO
 
 # change line order: alt + -^
 # multiline edit: alt + click

@@ -40,9 +40,11 @@ async def new_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         name, record = text[0], text[1]
         exercise = Exercise(name, record, update.effective_user.id)
-        gym_tracker.write_exercise(exercise)
+        exercise_already_registered = gym_tracker.write_exercise(exercise)
+
+        if exercise_already_registered == True:
+            text_to_send = COMMAND_TEXTS["IT"]["exerciseAlreadyRegistered"]
     except Exception as e:
-        print(e)
         text_to_send = COMMAND_TEXTS["IT"]["ERROR"]["EXERCISE_REGISTER_ERROR"]
 
     await context.bot.send_message(
@@ -77,10 +79,9 @@ async def reset_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat_id=update.effective_chat.id,
         text=COMMAND_TEXTS["IT"]["reset"]
     )
-    
+
 
 if __name__ == '__main__':
-
     handlers = [CommandHandler('start', start), CommandHandler('help', help), 
                 CommandHandler('esercizio', new_exercise), CommandHandler('registro', read_all_exercises),
                 CommandHandler('reset', reset_all), CommandHandler('cancella', delete_exercise)]
