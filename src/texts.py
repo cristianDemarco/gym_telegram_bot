@@ -44,7 +44,7 @@ Ad esempio <i>'/cancella Backsquat'</i>.
 }
 
 DF_HEADERS = {
-    "ESERCIZIO" : "<b>ESERCIZIO</b>",
-    "PESO" : "<b>PESO</b>",
-    "DATA" : "<b>DATA</b>"
+    "ESERCIZIO": "<b>ESERCIZIO</b>",
+    "PESO": "<b>PESO</b>",
+    "DATA": "<b>DATA</b>"
 }

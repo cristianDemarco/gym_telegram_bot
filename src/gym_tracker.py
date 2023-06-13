@@ -26,6 +26,7 @@ class GymTracker:
             exercise = [{DF_HEADERS["ESERCIZIO"]: exercise.name, DF_HEADERS["PESO"]: exercise.record, DF_HEADERS["DATA"]: exercise.date, "USER_ID": exercise.user_id}]
             df = pd.DataFrame(exercise)
             self.dataframe = pd.concat([self.dataframe, df])
+
         finally:
             self.update_csv_file()
 

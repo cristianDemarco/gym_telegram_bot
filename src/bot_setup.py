@@ -51,12 +51,13 @@ async def new_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if exercise_already_registered == True:
             text_to_send = COMAND_TEXTS["IT"]["exerciseAlreadyRegistered"]
-    except Exception as e:
+    except:
         text_to_send = COMAND_TEXTS["IT"]["ERROR"]["EXERCISE_REGISTER_ERROR"]
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=text_to_send
+        text=text_to_send,
+        parse_mode=ParseMode.HTML
     )
 
 async def read_all_exercises(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -77,7 +78,8 @@ async def delete_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await context.bot.send_message(
         chat_id = update.effective_chat.id,
-        text = text_to_send
+        text = text_to_send,
+        parse_mode=ParseMode.HTML
     )
 
 async def reset_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -85,7 +87,8 @@ async def reset_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=COMAND_TEXTS["IT"]["reset"]
+        text=COMAND_TEXTS["IT"]["reset"],
+        parse_mode=ParseMode.HTML
     )
 
 if __name__ == '__main__':
