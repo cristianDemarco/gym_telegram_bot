@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.gym_tracker import GymTracker
 from src.exercise import Exercise
-from src.command_texts import COMMAND_TEXTS
+from texts import COMAND_TEXTS
 from src.TOKEN import TOKEN
 
 gym_tracker = GymTracker()
@@ -27,13 +27,13 @@ application = ApplicationBuilder().token(TOKEN).build()
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=COMMAND_TEXTS["IT"]["start"]
+        text=COMAND_TEXTS["IT"]["start"]
     )
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=COMMAND_TEXTS["IT"]["help"],
+        text=COMAND_TEXTS["IT"]["help"],
         parse_mode=ParseMode.HTML
     )
 
@@ -42,7 +42,7 @@ async def new_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
     date = update.effective_message.date.date()
     date = datetime.strptime(str(date),"%Y-%m-%d").strftime("%d/%m/%Y")
 
-    text_to_send = COMMAND_TEXTS["IT"]["exerciseRegisteredSuccessfully"]
+    text_to_send = COMAND_TEXTS["IT"]["exerciseRegisteredSuccessfully"]
 
     try:
         name, record = text[0], text[1]
@@ -50,9 +50,9 @@ async def new_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
         exercise_already_registered = gym_tracker.write_exercise(exercise)
 
         if exercise_already_registered == True:
-            text_to_send = COMMAND_TEXTS["IT"]["exerciseAlreadyRegistered"]
+            text_to_send = COMAND_TEXTS["IT"]["exerciseAlreadyRegistered"]
     except Exception as e:
-        text_to_send = COMMAND_TEXTS["IT"]["ERROR"]["EXERCISE_REGISTER_ERROR"]
+        text_to_send = COMAND_TEXTS["IT"]["ERROR"]["EXERCISE_REGISTER_ERROR"]
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
@@ -68,12 +68,12 @@ async def read_all_exercises(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 async def delete_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
     exercise_name = update.message.text.replace("/cancella ", "").strip()
-    text_to_send = COMMAND_TEXTS["IT"]["exerciseDeleted"]
+    text_to_send = COMAND_TEXTS["IT"]["exerciseDeleted"]
 
     try:
         gym_tracker.delete_exercise(exercise_name, update.effective_user.id)
     except:
-        text_to_send = COMMAND_TEXTS["IT"]["ERROR"]["EXERCISE_DELETION_ERROR"]
+        text_to_send = COMAND_TEXTS["IT"]["ERROR"]["EXERCISE_DELETION_ERROR"]
 
     await context.bot.send_message(
         chat_id = update.effective_chat.id,
@@ -85,7 +85,7 @@ async def reset_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=COMMAND_TEXTS["IT"]["reset"]
+        text=COMAND_TEXTS["IT"]["reset"]
     )
 
 if __name__ == '__main__':

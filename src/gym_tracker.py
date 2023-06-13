@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.CONSTANTS import FILE_PATH
 from src.exercise import Exercise
-from src.command_texts import COMMAND_TEXTS
+from texts import COMAND_TEXTS, DF_HEADERS
 
 class GymTracker:
 
@@ -18,12 +18,12 @@ class GymTracker:
     def write_exercise(self, exercise: Exercise) -> bool:
         exercise_already_registered = False
         try:
-            index = self.dataframe.index[(self.dataframe['ESERCIZIO'] == exercise.name) & (self.dataframe['USER_ID'] == exercise.user_id)].tolist()
-            self.dataframe.loc[index[0], "PESO"] = exercise.record
+            index = self.dataframe.index[(self.dataframe[DF_HEADERS['ESERCIZIO']] == exercise.name) & (self.dataframe['USER_ID'] == exercise.user_id)].tolist()
+            self.dataframe.loc[index[0], DF_HEADERS["PESO"]] = exercise.record
 
             exercise_already_registered = True
         except:
-            exercise = [{"ESERCIZIO": exercise.name, "PESO": exercise.record, "DATA": exercise.date, "USER_ID": exercise.user_id}]
+            exercise = [{DF_HEADERS["ESERCIZIO"]: exercise.name, DF_HEADERS["PESO"]: exercise.record, DF_HEADERS["DATA"]: exercise.date, "USER_ID": exercise.user_id}]
             df = pd.DataFrame(exercise)
             self.dataframe = pd.concat([self.dataframe, df])
         finally:
@@ -38,12 +38,12 @@ class GymTracker:
         if not filtered_data.empty:
             text = tabulate(filtered_data, headers="keys", tablefmt = "plain", showindex=False, colalign = ("left", "left", "center"))
         else:
-            text = COMMAND_TEXTS["IT"]["registerIsEmpty"]
+            text = COMAND_TEXTS["IT"]["registerIsEmpty"]
 
         return text
     
     def delete_exercise(self, exercise_name: str, user_id: int):
-        filtered_data = self.dataframe.loc[(self.dataframe["ESERCIZIO"] == exercise_name) & (self.dataframe["USER_ID"] == user_id)]
+        filtered_data = self.dataframe.loc[(self.dataframe[DF_HEADERS['ESERCIZIO']] == exercise_name) & (self.dataframe["USER_ID"] == user_id)]
 
         if filtered_data.empty:
             raise Exception("No exercise specified")

@@ -1,4 +1,4 @@
-COMMAND_TEXTS = {
+COMAND_TEXTS = {
     "IT" : {
         "start" : "Benvenuto, per iniziare esegui /help",
 
@@ -41,4 +41,10 @@ Ad esempio <i>'/cancella Backsquat'</i>.
             """
         }
     }
+}
+
+DF_HEADERS = {
+    "ESERCIZIO" : "<b>ESERCIZIO</b>",
+    "PESO" : "<b>PESO</b>",
+    "DATA" : "<b>DATA</b>"
 }
