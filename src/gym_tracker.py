@@ -5,16 +5,9 @@ import pandas as pd
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from CONSTANTS import FILE_PATH
+from src.CONSTANTS import FILE_PATH
+from src.exercise import Exercise
 from src.command_texts import COMMAND_TEXTS
-
-class Exercise:
-    
-    def __init__(self, name: str = "Undefined", record: int = 0, date: str = "Undefined", user_id: int = 0) -> None:
-        self.name = name
-        self.record = record
-        self.date = date
-        self.user_id = user_id
 
 class GymTracker:
 
@@ -43,7 +36,7 @@ class GymTracker:
         filtered_data = filtered_data.loc[:, filtered_data.columns != "USER_ID"]
 
         if not filtered_data.empty:
-            text = tabulate(filtered_data, headers="keys", tablefmt = "plain", showindex=False, colalign = ("center", "center", "center"))
+            text = tabulate(filtered_data, headers="keys", tablefmt = "plain", showindex=False, colalign = ("left", "left", "center"))
         else:
             text = COMMAND_TEXTS["IT"]["registerIsEmpty"]
 

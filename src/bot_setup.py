@@ -3,11 +3,13 @@ import sys
 import logging
 from datetime import datetime
 from telegram import Update
+from telegram.constants import ParseMode
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.gym_tracker import Exercise, GymTracker
+from src.gym_tracker import GymTracker
+from src.exercise import Exercise
 from src.command_texts import COMMAND_TEXTS
 from src.TOKEN import TOKEN
 
@@ -31,7 +33,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=COMMAND_TEXTS["IT"]["help"]
+        text=COMMAND_TEXTS["IT"]["help"],
+        parse_mode=ParseMode.HTML
     )
 
 async def new_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -42,7 +45,7 @@ async def new_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text_to_send = COMMAND_TEXTS["IT"]["exerciseRegisteredSuccessfully"]
 
     try:
-        name, record = text[0].strip(), text[1].strip()
+        name, record = text[0], text[1]
         exercise = Exercise(name, record, date, update.effective_user.id)
         exercise_already_registered = gym_tracker.write_exercise(exercise)
 
@@ -59,7 +62,8 @@ async def new_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def read_all_exercises(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=gym_tracker.read_all_exercises(update.effective_user.id)
+        text=gym_tracker.read_all_exercises(update.effective_user.id),
+        parse_mode=ParseMode.HTML
     )
 
 async def delete_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE):
